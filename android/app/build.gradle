@@ -11,7 +11,7 @@ android {
         targetSdkVersion 33
         // Always increasing in CI so a new build can be installed over the old one
         versionCode Integer.parseInt(System.getenv('GITHUB_RUN_NUMBER') ?: '1')
-        versionName '0.1'
+        versionName '1.0'
 
         externalNativeBuild {
             ndkBuild {
@@ -27,9 +27,6 @@ android {
         }
     }
 
-    // Release signing: the keystore comes from env vars set by the GitHub
-    // Actions workflow (decoded from repository secrets). Nothing secret is
-    // stored in the repo.
     signingConfigs {
         release {
             def ksFile = System.getenv('KEYSTORE_FILE')
