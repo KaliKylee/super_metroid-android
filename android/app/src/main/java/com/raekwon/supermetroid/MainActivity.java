@@ -6,6 +6,8 @@ import android.os.Bundle;
 import android.view.Display;
 import android.view.KeyEvent;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.RelativeLayout;
 
 import org.libsdl.app.SDLActivity;
 
@@ -20,6 +22,7 @@ public class MainActivity extends SDLActivity {
         @Override public void onDisplayChanged(int displayId) { }
     };
     private SecondScreenPresentation secondScreen;
+    private TouchControlsView touchControls;
 
     @Override
     protected String[] getLibraries() {
@@ -30,8 +33,23 @@ public class MainActivity extends SDLActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         goFullscreen();
+        addTouchControls();
         displayManager = (DisplayManager) getSystemService(Context.DISPLAY_SERVICE);
         displayManager.registerDisplayListener(displayListener, null);
+    }
+
+    // On-screen touch controls (see TouchControlsView). They sit on top of the
+    // SDL surface inside SDLActivity's own layout and feed the game through
+    // SDL's key-injection entry points, so no native/C changes are needed.
+    // Hidden automatically while a physical gamepad is connected.
+    private void addTouchControls() {
+        View content = SDLActivity.getContentView();
+        if (!(content instanceof ViewGroup)) return;
+        touchControls = new TouchControlsView(this);
+        ((ViewGroup) content).addView(touchControls,
+                new RelativeLayout.LayoutParams(
+                        ViewGroup.LayoutParams.MATCH_PARENT,
+                        ViewGroup.LayoutParams.MATCH_PARENT));
     }
 
     @Override
