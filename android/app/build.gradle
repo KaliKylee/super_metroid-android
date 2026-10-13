@@ -10,7 +10,7 @@ android {
         minSdkVersion 21
         targetSdkVersion 33
         // Always increasing in CI so a new build can be installed over the old one
-        versionCode (System.getenv('GITHUB_RUN_NUMBER') ?: '1').toInteger()
+        versionCode Integer.parseInt(System.getenv('GITHUB_RUN_NUMBER') ?: '1')
         versionName '0.1'
 
         externalNativeBuild {
