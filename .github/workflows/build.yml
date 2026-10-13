@@ -44,12 +44,17 @@ jobs:
 
       - name: Set up Gradle
         uses: gradle/actions/setup-gradle@v4
+        with:
+          # The repo's wrapper jar (copied from SDL's android-project) is not in
+          # Gradle's list of known checksums, so wrapper validation fails.
+          # We install Gradle 8.4 (the version in gradle-wrapper.properties)
+          # ourselves and run `gradle` directly, never executing that jar.
+          validate-wrappers: false
+          gradle-version: '8.4'
 
       - name: Build debug APK
         working-directory: android
-        run: |
-          chmod +x gradlew
-          ./gradlew assembleDebug --no-daemon
+        run: gradle assembleDebug --no-daemon
 
       - name: Rename APK
         run: |
