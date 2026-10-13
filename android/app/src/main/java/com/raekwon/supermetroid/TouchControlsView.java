@@ -1,5 +1,6 @@
 package com.raekwon.supermetroid;
 
+import android.app.AlertDialog;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.Canvas;
@@ -8,12 +9,14 @@ import android.graphics.Paint;
 import android.graphics.Path;
 import android.graphics.RectF;
 import android.hardware.input.InputManager;
+import android.text.util.Linkify;
 import android.util.SparseBooleanArray;
 import android.view.HapticFeedbackConstants;
 import android.view.InputDevice;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.TextView;
 
 import org.libsdl.app.SDLActivity;
 
@@ -80,7 +83,8 @@ public class TouchControlsView extends View implements InputManager.InputDeviceL
         new Btn(BTN_START, "START", false),
     };
 
-    private static final int MENU_ITEMS = 8;
+    private static final int MENU_ITEMS = 9;
+    private static final int MENU_COLS = 3;
     private final RectF[] menuRects = new RectF[MENU_ITEMS];
     private float menuCx, menuCy, menuR;
     private boolean menuOpen;
@@ -223,11 +227,11 @@ public class TouchControlsView extends View implements InputManager.InputDeviceL
         menuCx = w / 2f;
         menuCy = dp(10) + menuR;
         float iw = dp(74) * s, ih = dp(34) * s, gap = dp(6);
-        float panelW = 4 * iw + 3 * gap;
+        float panelW = MENU_COLS * iw + (MENU_COLS - 1) * gap;
         float left0 = w / 2f - panelW / 2f;
         float top0 = menuCy + menuR + gap;
         for (int i = 0; i < MENU_ITEMS; i++) {
-            int col = i % 4, row = i / 4;
+            int col = i % MENU_COLS, row = i / MENU_COLS;
             float l = left0 + col * (iw + gap);
             float t = top0 + row * (ih + gap);
             menuRects[i].set(l, t, l + iw, t + ih);
@@ -413,9 +417,27 @@ public class TouchControlsView extends View implements InputManager.InputDeviceL
                 prefs.edit().putInt("size", sizeIdx).apply();
                 layoutControls(getWidth(), getHeight());
                 break;
+            case 8:
+                menuOpen = false;
+                showCredits();
+                break;
             default:
                 break;
         }
+    }
+
+    private void showCredits() {
+        TextView tv = new TextView(getContext());
+        tv.setText("Port By Kali Kyle\nhttps://discord.gg/fUnXU4RZgn");
+        tv.setTextSize(16f);
+        int pad = (int) dp(24);
+        tv.setPadding(pad, pad / 2, pad, pad / 2);
+        Linkify.addLinks(tv, Linkify.WEB_URLS);
+        new AlertDialog.Builder(getContext())
+                .setTitle("Super Metroid")
+                .setView(tv)
+                .setPositiveButton("OK", null)
+                .show();
     }
 
     private String menuLabel(int i) {
@@ -427,7 +449,8 @@ public class TouchControlsView extends View implements InputManager.InputDeviceL
             case 4: return "Muni \u25C0";
             case 5: return "Muni \u25B6";
             case 6: return "Opac. " + (OPACITY[opacityIdx] * 100 / 255) + "%";
-            default: return "Tam. " + SIZE_NAME[sizeIdx];
+            case 7: return "Tam. " + SIZE_NAME[sizeIdx];
+            default: return "Cr\u00e9ditos";
         }
     }
 

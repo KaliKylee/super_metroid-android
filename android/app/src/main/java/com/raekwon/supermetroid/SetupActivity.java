@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.text.util.Linkify;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.Button;
@@ -61,6 +62,19 @@ public class SetupActivity extends Activity {
             }
         });
         root.addView(pick);
+
+        // Credits
+        TextView credit = new TextView(this);
+        credit.setText("Port By Kali Kyle");
+        credit.setGravity(Gravity.CENTER);
+        credit.setPadding(0, pad, 0, 0);
+        root.addView(credit);
+
+        TextView discord = new TextView(this);
+        discord.setText("https://discord.gg/fUnXU4RZgn");
+        discord.setGravity(Gravity.CENTER);
+        Linkify.addLinks(discord, Linkify.WEB_URLS);
+        root.addView(discord);
 
         setContentView(root);
     }
