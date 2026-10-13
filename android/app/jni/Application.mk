@@ -1,6 +1,6 @@
-# Targeting the AYN Thor (arm64) for now; widen ABI_FILTERS in app/build.gradle
-# (and here) later if broader device support is needed.
-APP_ABI := arm64-v8a
+# Both ABIs go into the same APK (Android picks the right one per device).
+# Keep this in sync with abiFilters in app/build.gradle.
+APP_ABI := arm64-v8a armeabi-v7a
 APP_PLATFORM := android-21
 APP_CFLAGS := -Wno-error
 
