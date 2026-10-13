@@ -1,9 +1,6 @@
 name: Build APK
 
 on:
-  push:
-    branches: [main]
-  pull_request:
   workflow_dispatch:
 
 concurrency:
@@ -69,9 +66,8 @@ jobs:
           if-no-files-found: error
 
       # Rolling release so the APK can be downloaded straight from the
-      # Releases page (easy on a phone). Only on pushes to main / manual runs.
+      # Releases page (easy on a phone).
       - name: Move latest-build tag
-        if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
@@ -79,13 +75,12 @@ jobs:
           git push -f origin latest-build
 
       - name: Publish rolling release
-        if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
         uses: softprops/action-gh-release@v2
         with:
           tag_name: latest-build
           name: Latest build
           prerelease: true
           body: |
-            Debug APK built automatically from the latest commit on main.
+            Debug APK built manually via GitHub Actions (Run workflow).
             You need to provide your own Super Metroid ROM on first launch.
           files: dist/SuperMetroid-touch-debug.apk
