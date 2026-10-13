@@ -9,7 +9,8 @@ android {
         applicationId 'com.raekwon.supermetroid'
         minSdkVersion 21
         targetSdkVersion 33
-        versionCode 1
+        // Always increasing in CI so a new build can be installed over the old one
+        versionCode (System.getenv('GITHUB_RUN_NUMBER') ?: '1').toInteger()
         versionName '0.1'
 
         externalNativeBuild {
@@ -26,9 +27,27 @@ android {
         }
     }
 
+    // Release signing: the keystore comes from env vars set by the GitHub
+    // Actions workflow (decoded from repository secrets). Nothing secret is
+    // stored in the repo.
+    signingConfigs {
+        release {
+            def ksFile = System.getenv('KEYSTORE_FILE')
+            if (ksFile) {
+                storeFile file(ksFile)
+                storePassword System.getenv('KEYSTORE_PASSWORD')
+                keyAlias System.getenv('KEY_ALIAS')
+                keyPassword System.getenv('KEY_PASSWORD')
+            }
+        }
+    }
+
     buildTypes {
         release {
             minifyEnabled false
+            if (System.getenv('KEYSTORE_FILE')) {
+                signingConfig signingConfigs.release
+            }
         }
     }
 
